@@ -1,0 +1,241 @@
+<h1>TL;DR</h1>
+<p>
+  When trying to fix a bug in your code, never do the following things: 
+</p>
+<ol>
+  <li>
+    Modify code in a trial-and-error way, at a very early stage
+  </li>
+  <li>
+    Assume that there is only one error leads to the bug
+  </li>
+  <li>
+    Fix code before you are absolute certain that the line of code causes error
+  </li>
+</ol>
+<p>
+  but instead, follow these steps:
+</p>
+<ol>
+  <li>
+    Inspect the code
+  </li>
+  <li>
+    Construct failing unit tests
+  </li>
+  <li>
+    Use debug mode (or insert log statements)
+  </li>
+  <li>
+    Construct a minimum working example to reproduce the bug 
+  </li>
+  <li>
+    Unless absolutely necessary, tweak the code and pray that it would work
+  </li>
+</ol>
+<h1>The disciplines of bug fixing: premature bug-fixing considered harmful</h1>
+<p>
+  Fixing a bug in a computer program is hard. This is particularly true for new programmers and for
+  unfamiliar code bases. Common programming tasks such as testing and debugging can be as 
+  challenging as code writing itself, but they usually are not as recognized in academia and 
+  corporate environments, which inspires me to write this article.
+</p>
+<p>
+  Not only are bug fixes hard, they can also be liabilities in the software development process.
+  I have seen numerous cases in production software 
+  where bug fix fails. When a bug fix fail, a new bug may occur, or will cause hazard in future 
+  development (technical debt).
+</p>
+<p>
+  To ensure the quality of bug fixes and make the bug fix process more efficient, we need to apply 
+  disciplines to prevent programmers to fix a bug prematurely.
+</p>
+<h2>What is premature bug-fixing</h2>
+<p>
+  Premature bug-fixing is a result in a programmer's laziness. It happens in a scenario like this:
+</p>
+<ul>
+  <li>
+    A bug occurs
+  </li>
+  <li>
+    The programmer thinks a line of code may cause the bug
+  </li>
+  <li>
+    The programmer changes the line of code
+  </li>
+  <li>
+    The bug is fixed
+  </li>
+</ul>
+<p>
+  or
+</p>
+<ul>
+  <li>
+    A bug occurs
+  </li>
+  <li>
+    The programmer runs debug mode and observes anomalies in local variables
+  </li>
+  <li>
+    The programmer thinks a line of code may cause the local variables to go wrong
+  </li>
+  <li>
+    The programmer changes the line of code
+  </li>
+  <li>
+    The bug is fixed
+  </li>
+</ul>
+<p>
+  or worse
+</p>
+<ul>
+  <li>
+    A bug occurs
+  </li>
+  <li>
+    The programmer thinks a variable's value has correlation to the bug
+  </li>
+  <li>
+    The programmer tweaks the value until the bug disappears
+  </li>
+  <li>
+    The bug is fixed
+  </li>
+</ul>
+<p>
+  In the above scenarios, the programmer do not have sufficient knowledge about the actual cause of
+  the bug. Before attempting to fix a bug, the programmer should ask him/herself: am I 100% certain 
+  that this line of code is erroneous? If this question cannot be answered, the programmer risks the 
+  danger of premature bug-fixing.
+</p>
+<h2>Why trial-and-error debugging is evil</h2>
+<p>
+  Trial-and-error debugging is an extreme case of premature bug-fixing, and is wasteful and 
+  extremely dangerous. If a programmer uses trial-and-error debugging, it means the programmer lacks 
+  of the knowledge of the cause of the bug and even the code logic itself. And if there are two 
+  parts of code contribute to the bug, tweak one part of the code using trial-and-error can rarely 
+  solve the issue, so it can take longer to fix the bug than finding the bug at the first place.
+</p>
+<h2>Employ the mentality of a detective</h2>
+<p>
+  Bug fixing is like investigating a crime scene. When watching the TV series <i>Elementary</i>
+  with my wife, I realized many parallels can be drawn between the process of identifying the 
+  criminal, and finding a bug in codes. The similarities are:
+</p>
+<ul>
+  <li>
+    A detective needs to gather enough evidence before accusing the suspect.
+  </li>
+</ul>
+<p>
+  When debugging a programming you don't want to "fix" a code that is perfectly correct and/or miss
+  the actually problematic code.
+</p>
+<ul>
+  <li>
+    A good detective is observant to evidences.
+  </li>
+</ul>
+<p>
+  Gathering information is crucial in the debugging process. A number of tools can help this: 
+  debugger, logging, memory verifier, profiler, and so on.
+</p>
+<ul>
+  <li>
+    Deductive logic reasoning is used extensively in a criminal investigation.
+  </li>
+</ul>
+<p>
+  Logic reasoning is a common activity in debugging. Common types of logic reasoning are:
+</p>
+<h3>Deductive reasoning</h3>
+<p>
+  <b>Example:</b>
+  The value of variable var_a is wrong. The value of var_a is populated by function func_a, and is
+  never tempered with since. Therefore, the logic of func_a is erroneous.
+</p>
+<p>
+  <a href='https://en.wikipedia.org/wiki/Deductive_reasoning'>Deductive reasoning</a>
+  is to reach conclusion with certainty from observations. Gathering evidence 
+  and making logical deductions should be the concentration of the debugging process. If a bug is 
+  traced and fixed purely through deductive reasoning, we can be certain that the bug is fixed 
+  successfully.
+</p>
+<h3>Inductive reasoning</h3>
+<p>
+  <b>Example:</b>
+  There is a out-of-memory error in the program. After a web search, the program find out that 
+  others fixed their out-of-memory error by calling the garbage collection manually. Therefore, the
+  programmer adds code to trigger manual garbage collection as a bug fix.
+</p>
+<p>
+  <b>Another example:</b>
+  There is a bug in the program. There was a bug-fix for a similar issue yesterday in a different 
+  part of the system. Therefore, the programmer applies the same bug-fix to the program.
+</p>
+<p>
+  <a href='https://en.wikipedia.org/wiki/Inductive_reasoning'>Inductive reasoning</a>
+  reaches conclusions from the implications of evidences. The conclusions drawn from inductive 
+  reasoning is not necessarily the truth, so use it to construct 
+  <a href="#header_hypothesis">hypotheses</a>, or use is as bug fix
+  after deductive reasoning has failed and the error is 
+  <a href='#header_mwe'>isolated</a>.
+</p>
+<h3>Abductive reasoning</h3>
+<p>
+  <b>Example:</b>
+  There is a bug in the program. The program works fine yesterday. Alex pushed a change set this 
+  morning. Therefore, the bug is within Alex's change set.
+</p>
+<p>
+  <a href=https://en.wikipedia.org/wiki/Abductive_reasoning#Abductive_reasoning_.28abduction.29'>
+    Abductive reasoning
+  </a>
+  is a process of finding the easiest explanation for an observation. Abductive reasoning is not 
+  suitable for reaching a conclusion for bug fix in computer programs because it is likely to be 
+  wrong due to the complexity of the code base. In this example, the Alex's code can be correct, but 
+  it triggers some problematic code elsewhere in the code base. It is, though, a way to construct 
+  <a href="#header_hypothesis">hypotheses</a> which helps the debugging process.
+</p>
+<h1>The methods of bug fixing</h1>
+<h2>
+  Inspection - Inspect the code
+</h2>
+<p>
+  If you are fixing someone else's code, code inspection is firstly about understanding the logic 
+  of the code. Note that there is no need to understand the entire code base to apply a bug fix. 
+  Theoretically, you only need to grasp the codes that lead to the bug. To help understanding 
+  complexed code, you can make use of debugger to follow the actual flow.
+</p>
+<p>
+  With the knowledge of the code, you can start guessing where the error is. In some cases the most
+  trivial bug can be found, like a typo. If you are absolutely certain that you have found the bug,
+  fix it and call it a day. Otherwise, you need to dig deeper using a debugger or other tools.
+</p>
+<h2> Test automation - Construct failing unit tests </h2>
+<p>
+</p>
+<h2 id='header_hypothesis'>
+  Build hypothesis
+</h2>
+<p>
+</p>
+<h2>
+  Probing - Use debug mode (or insert log statements)
+</h2>
+<p>
+</p>
+<h2 id='header_mwe'>
+  Isolation - Construct a minimum working example to reproduce the bug 
+</h2>
+<p>
+</p>
+<h2>
+  Unless absolutely necessary, tweak the code and pray that it would work
+</h2>
+<p>
+</p>
+<h1>How to make use of the debug mode</h1>
