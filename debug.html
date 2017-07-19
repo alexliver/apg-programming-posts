@@ -24,7 +24,7 @@
     Construct failing unit tests
   </li>
   <li>
-    Use debug mode (or insert log statements)
+    Use a debugger (or insert log statements)
   </li>
   <li>
     Construct a minimum working example to reproduce the bug 
@@ -212,30 +212,131 @@
 </p>
 <p>
   With the knowledge of the code, you can start guessing where the error is. In some cases the most
-  trivial bug can be found, like a typo. If you are absolutely certain that you have found the bug,
-  fix it and call it a day. Otherwise, you need to dig deeper using a debugger or other tools.
+  trivial bug can be found, like a typo. If you are <b>absolutely certain</b> that you have found 
+  the bug, fix it and call it a day. Otherwise, you need to dig deeper using a debugger or other 
+  tools.
 </p>
 <h2> Test automation - Construct failing unit tests </h2>
 <p>
+  Intergrating test-driven development (TDD) is a great way to start the bug fixing process. By
+  writing a unit test, you have basically avoided the same bug recurring in the future. And by
+  writing the test beforehand, it saves the hassle to test the solution manually. It is however
+  dangerous to shift the mentality from "fixing the bug" to "try to make the unit test pass". You
+  still need to make sure that you find the actual cause of the bug in the following steps.
 </p>
 <h2 id='header_hypothesis'>
-  Build hypothesis
+  Hypothesis - Make guesses about the bug
 </h2>
 <p>
+  Making hypotheses is a continuous activity throughout the debugging process. After a hypothesis is
+  made, other debugging methods can follow to verify the hypothesis, and after other debugging
+  methods are done, new hypotheses can be made. Debugging is an recursive process, which finishes
+  when the bug is found. If a dead end is met, try using a different direction or approach. 
+  Examples:
 </p>
+<ul>
+  <li>
+    Hypothesis - the value of var_a is invalid.
+  </li>
+  <li>
+    Verifies the hypotheses by using a debugger.
+  </li>
+  <li>
+    New hypothesis: the invalid value of var_a is populated by the function func_a.
+  </li>
+  <li>
+    Verifies the hypotheses by re-running the debugger. This time step into func_a.
+  </li>
+</ul>
+<p>or</p>
+<ul>
+  <li>
+    Hypothesis - there is a bug in the third party library lib_a.
+  </li>
+  <li>
+    A web search further strengthens the hypothesis, but not necessarily proves it.
+  </li>
+  <li>
+    Verifies the hypothesis by constructing a minimum working example to isolate the usage of lib_a
+    from the rest of the system.
+  </li>
+</ul>
 <h2>
-  Probing - Use debug mode (or insert log statements)
+  Probing - Use a debugger (or insert log statements)
 </h2>
 <p>
+  The debugger is the most powerful tool in a programmer's arsenal. It is like giving a detective
+  the ability to travel in time to relive the crime. However, unlike time, the programming logic is
+  non-linear and tricky. Therefore, the programmer are given the ability to dissect the code by
+  inserting breakpoints.
+</p>
+<p>
+  If there is a hypothesis in place, the programmer can insert the breakpoint where it expose the
+  maximum amount of information in order to prove the hypothesis. If there is no hypothesis yet, add
+  a breakpoint where you think is before the actual bug. Step over the code and observe important
+  variables, until a hypothesis can be made.
+</p>
+<p>
+  In some cases the debugger may not work (the debugger doesn't work for the language, or the bug
+  doesn't occur when running the debugger). Writing logs can be an alternative to running a
+  debugger. It has the ability to prove hypotheses and gather evidence by writing specific variables
+  to the console or file system, but it cannot not expose as much information as a debugger can. And
+  besides, writing logs is not always reliable. In many systems log writing uses buffered IO, which
+  may fail when the program crashes. 
 </p>
 <h2 id='header_mwe'>
   Isolation - Construct a minimum working example to reproduce the bug 
 </h2>
 <p>
+  Some hypotheses cannot be proven through the usage of a debugger or logger. This can happen when
+  you suspect there is a bug within a third-party program, or the problem is impossible to be
+  traced. A common scenario is UI layout issues across different platforms. If such things happen,
+  it's time to construct a minimum working example (MWE) which reproduces the bug to isolate the
+  suspected problem from the rest of the code.
+</p>
+<p>
+  Constructing an MWE does not fix the bug directly, but it shows that a part of the code is
+  problematic. After MWE is constructed, it may be apparent that a third-party library is to blame
+  for the bug, and it is much easier for the programmer to seek help from other people using the MWE
+  instead of the whole system. Besides, a lot of the problem with the program or the debug process
+  may be discovered when constructing an MWE.
 </p>
 <h2>
   Unless absolutely necessary, tweak the code and pray that it would work
 </h2>
 <p>
+  This is clutching at straws to rescue the program from the bug. 
+  
+  Several questions need to be answered before using the trial-and-error approach:
 </p>
-<h1>How to make use of the debug mode</h1>
+<ul>
+  <li>
+    Have I examined all possible evidences along the execution path?
+  </li>
+  <li>
+    Have I created MWE to demonstrate the bug that I'm dealing with?
+  </li>
+</ul>
+<p>
+  If you can answer these questions with 'yes', then you can process with trial-and-error.
+  The tweaking should only be done on the MWE, but not the actual code itself.
+</p>
+<h2>
+  Other tools
+</h2>
+<p>
+  Use a profiler for performance related issues. Use a memory verifier (such as Valgrind) for memory
+  problems in non-memory-safe languages.
+</p>
+<h2>
+  Other issues in debugging
+</h2>
+<h3>
+  Third-party software
+</h3>
+<h3>
+  Debugging functional programming code
+</h3>
+<h3>
+  Difficult bugs
+</h3>
